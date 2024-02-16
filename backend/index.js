@@ -1,34 +1,34 @@
-// const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
 dotenv.config({ path: "./config.env" });
 
 // 실제 오류가 발생할 곳에서 catch 하는 것이 가장 이상적입니다.
-process.on("uncaughtException", (err) => {
-  console.log("uncaught error ...");
-  console.log(err.name, err.message);
-  process.exit(1);
-});
+// process.on("uncaughtException", (err) => {
+//   console.log("uncaught error ...");
+//   console.log(err.name, err.message);
+//   process.exit(1);
+// });
 
 const app = require("./app");
 // const app = require("./starter/app");
 // const Tour = require("./starter/models/tourModel");
 
-// const DB = process.env.DATABASE.replace(
-//   "<PASSWORD>",
-//   process.env.DATABASE_PASSWORD,
-// );
+const DB = process.env.DATABASE.replace(
+  "<PASSWORD>",
+  process.env.DATABASE_PASSWORD,
+);
 
-// mongoose
-//   .connect(DB, {
-//     useNewUrlParser: true,
-//     useCreateIndex: true,
-//     useFindAndModify: false,
-//     useUnifiedTopology: true,
-//   })
-//   .then((con) => {
-//     console.log("DB connection successful!");
-//   });
+mongoose
+  .connect(DB, {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true,
+  })
+  .then((con) => {
+    console.log("DB connection successful!");
+  });
 
 const port = 8000;
 app.listen(port, () => {
