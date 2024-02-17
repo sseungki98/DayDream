@@ -22,4 +22,3 @@ exports.createUser = catchAsync(async (req, res, next) => {
     },
   });
 });
-
