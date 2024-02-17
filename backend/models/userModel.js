@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -65,6 +66,33 @@ const userSchema = new mongoose.Schema({
     enum: ["user", "admin"],
   },
 });
+
+// PASSWORD HASHING
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+
+  this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfirm = undefined;
+  next();
+});
+
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword,
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+// JWT 토큰을 발행한 뒤 비밀번호를 바꾼지 아닌지 체크. 바꿨다면 true, 아니라면 false return
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10,
+    );
+    return changedTimestamp > JWTTimestamp;
+  }
+};
 
 const User = mongoose.model("User", userSchema);
 
