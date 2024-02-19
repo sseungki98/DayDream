@@ -7,34 +7,34 @@ export type InputChangeEvent = ChangeEvent<HTMLInputElement>;
 interface StyledProps {}
 interface InputStyledProps {}
 interface Props extends StyledProps, InputStyledProps {
-  type: "text" | "number" | "email" | "textarea" | "password";
   value?: InputValue;
   placeholder: string;
-  onChange?: (event: InputChangeEvent) => void;
+  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
-function Input({ value = "", onChange, placeholder, type }: Props) {
+function TextAreaInput({ value = "", onChange, placeholder }: Props) {
   const [inputValue, setInputValue] = useState<InputValue>(value);
 
-  const changeHandler = (event: InputChangeEvent) => {
+  const changeHandler = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputValue(event.target.value);
     onChange && onChange(event);
   };
 
-  return <StyledInput value={value} onChange={changeHandler} placeholder={placeholder} type={type} />;
+  return <StyledInput value={value} onChange={changeHandler} placeholder={placeholder} maxLength={100} />;
 }
 
-export default Input;
+export default TextAreaInput;
 
-const StyledInput = styled.input`
+const StyledInput = styled.textarea`
   width: 80%;
-  height: 45px;
+  height: 150px;
   border-radius: 10px;
   border: 1px solid #86a9f9;
   background-color: #f7f7f7;
   font-size: 16px;
-  padding-left: 10px;
+  padding: 10px;
   box-sizing: border-box;
+  resize: none;
   &::placeholder {
     font-size: 16px;
     color: #d4d4d4;
