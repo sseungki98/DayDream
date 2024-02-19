@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+
+@font-face {
+  font-family: super-magic;
+  src: url("../public/fonts/Super\ Magic.ttf");
+}
+
+.super-magic {
+  font-family: super-magic;
+}
