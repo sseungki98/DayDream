@@ -118,6 +118,7 @@ export default Index;
 
 export const Background = styled.div`
   background-color: #bacfff;
+  width: 100%;
   height: 100vh;
 `;
 
