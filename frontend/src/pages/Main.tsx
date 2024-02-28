@@ -19,17 +19,17 @@ function Main() {
       case "mypage":
         return <Mypage />;
       case "etc":
-        return <PrivateChat onItemClick={itemClickHandler}/>;
+        return <PrivateChat />;
     }
   };
 
-  const itemClickHandler = (item: FooterType) => {
-    setFooterStatus(item);
-  };
+  // const itemClickHandler = (item: FooterType) => {
+  //   setFooterStatus(item);
+  // };
   return (
     <>
       <Background>{viewHandler()}</Background>
-      <FooterBar onItemClick={itemClickHandler} />
+      <FooterBar />
     </>
   );
 }

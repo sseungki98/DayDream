@@ -4,19 +4,22 @@ import Input from "../components/Input";
 import api from "../apis/api";
 import { ButtonContainer, Logo } from "./Index";
 import ThroughButton from "../components/ThroughButton";
+import { connectSocket } from "../utils/socket";
+import { useLogin } from "../stores/useLogin";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [loginInfo, setLoginInfo] = useState({
     email: "",
     password: "",
   });
+  const { login } = useLogin();
+  const navigator = useNavigate();
 
   const handleSumbit = (e: React.FormEvent) => {
     e.preventDefault();
-    api
-      .post("/users/login", loginInfo)
-      .then(res => alert("로그인이 성공했습니다." + res))
-      .catch(err => alert("로그인에 실패했습니다." + err));
+    const { email, password } = loginInfo;
+    login(email, password, navigator);
   };
   return (
     <Background>
