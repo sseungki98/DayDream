@@ -65,6 +65,7 @@ const userSchema = new mongoose.Schema({
     default: "user",
     enum: ["user", "admin"],
   },
+  socket: String,
 });
 
 // PASSWORD HASHING
