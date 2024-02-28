@@ -1,6 +1,6 @@
 const express = require("express");
-const morgan = require("morgan");
 const cors = require("cors");
+const morgan = require("morgan");
 // const rateLimit = require("express-rate-limit");
 const helmet = require("helmet");
 const mongoSanitize = require("express-mongo-sanitize");
@@ -11,8 +11,8 @@ const userRouter = require("./routers/userRouter");
 //app.js => All about express
 const app = express();
 // SECURITY HTTP HEADER
-app.use(helmet());
 app.use(cors());
+app.use(helmet());
 
 // GLOBAL MIDDLEWAREs
 // development logging
