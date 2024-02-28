@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
+const { getSocketId, userSocket } = require("../utils/socketIdStore");
 
 const signToken = (id) =>
   jwt.sign({ id: id }, process.env.JWT_SECRET, {
@@ -62,6 +63,10 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!user || !correct) {
     return next(new AppError("Incorrect email or passsword", 401));
   }
+  //   console.log("user:", user);
+  const socketId = getSocketId();
+  console.log(socketId);
+  userSocket[user._id] = socketId;
 
   // 3) if everything ok, send token to client
   createSendToken(user, 200, res);
