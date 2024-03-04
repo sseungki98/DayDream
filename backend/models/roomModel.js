@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const roomSchema = new mongoose.Schema({
   name: {
     type: String,
-    unique: true,
   },
+  roomId: String,
   createdAt: {
     type: Date,
     deafult: Date.now(),
@@ -19,6 +19,7 @@ const roomSchema = new mongoose.Schema({
     ref: "User",
     required: [true, "room must have users"],
   },
+  chats: [[String, String]],
 });
 
 const Room = mongoose.model("Room", roomSchema);
