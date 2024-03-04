@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FormEvent, useRef } from "react";
 import styled from "styled-components";
 import { IconRoute } from "../components/FooterBar";
 import { FooterType } from "./Main";
@@ -8,52 +8,88 @@ import { ConnectionManager } from "../components/ConnectionManager";
 import { useSocket } from "../stores/useSocket";
 import { useLogin } from "../stores/useLogin";
 import { useNavigate, useParams } from "react-router-dom";
+import { createRoomId } from "../utils/createRoomId";
+import api from "../apis/api";
 
 // { onItemClick }: { onItemClick: (item: FooterType) => void }
 function PrivateChat() {
   const navigator = useNavigate();
   const { id: toUserId } = useParams();
-  // const [isConnected, setIsConnected] = useState(socket.connected);
-  const [fooEvents, setFooEvents] = useState([""]);
   const { currentSocket: socket } = useSocket();
+  const [messages, setMessages] = useState([""]);
   const { id } = useLogin();
-  useEffect(() => {
-    function onFooEvent(value: string) {
-      setFooEvents(previous => [...previous, value]);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollToBottom = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: "smooth",
+      });
     }
+  };
 
+  useEffect(() => {
+    const roomId = createRoomId(id, toUserId!);
+    api
+      .get(`/rooms/${roomId}`, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("jwt")}`,
+        },
+      })
+      .then(res => {
+        console.log(res);
+        setMessages(res.data.data.room.chats);
+        console.log(messages);
+        scrollToBottom();
+      });
     if (socket) {
-      socket.on("foo", onFooEvent);
+      socket.on("sendMessage", (data: string) => {
+        console.log("messagedata:", data);
+        setMessages(prev => [...prev, data]);
+      });
     }
+    return () => {
+      socket!.off("sendMessage");
+    };
   }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const moveBack = () => {
     navigator("/chat");
   };
 
   const [chat, setChat] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
-  function onSubmit(event: React.MouseEvent) {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(socket);
-    // console.log(chat);
-    setIsLoading(true);
-
-    socket!.emit("reply", { to: toUserId, message: chat });
-  }
+    if (socket && chat.trim()) {
+      socket.emit("sendMessage", { sender: id, receiver: toUserId, message: chat });
+    }
+    setChat("");
+  };
 
   return (
     <Wrapper>
-      <Events events={fooEvents} />
       <ConnectionManager />
       <RoomHeader>
         <img src={IconRoute("back-arrow")} width={48} height={48} alt="back-icon" onClick={moveBack} />
         <span>이승현</span>
       </RoomHeader>
-      <SendBar>
+      <ChatBox ref={scrollRef}>
+        {messages.map((message, index) => (
+          <MessageBox key={index} position={message[0] === id ? "right" : "left"}>
+            {message[1]}
+          </MessageBox>
+        ))}
+      </ChatBox>
+      <SendBar onSubmit={handleSubmit}>
         <Input value={chat} onChange={e => setChat(e.target.value)} />
-        <img src={IconRoute("send")} width={48} height={48} alt="send-icon" onClick={e => onSubmit(e)} />
+        <button type="submit">
+          <img src={IconRoute("send")} width={48} height={48} alt="send-icon" />
+        </button>
       </SendBar>
     </Wrapper>
   );
@@ -77,7 +113,7 @@ const RoomHeader = styled.div`
   }
 `;
 
-const SendBar = styled.div`
+const SendBar = styled.form`
   width: 393px;
   height: 57px;
   display: flex;
@@ -89,6 +125,13 @@ const SendBar = styled.div`
   img {
     cursor: pointer;
   }
+  button {
+    width: 48px;
+    height: 48px;
+    border: none;
+    background-color: transparent;
+    display: inline-block;
+  }
 `;
 
 const Input = styled.input`
@@ -98,4 +141,20 @@ const Input = styled.input`
   border: 1px solid black;
   background-color: white;
   padding: 0px 10px 0px 10px;
+`;
+
+const ChatBox = styled.div`
+  width: 100%;
+  height: 600px;
+  overflow: scroll;
+  background: linear-gradient(180deg, #b1a8ff, #ffb580);
+  animation: 1s ease-in;
+`;
+
+const MessageBox = styled.div<{ position: string }>`
+  width: 80%;
+  height: 35px;
+  border: 1px solid black;
+  margin: 3px 0px 3px 0px;
+  float: ${props => props.position};
 `;
