@@ -7,6 +7,7 @@ const mongoSanitize = require("express-mongo-sanitize");
 const xss = require("xss-clean");
 // const hpp = require("hpp");
 const userRouter = require("./routers/userRouter");
+const roomRouter = require("./routers/roomRouter")
 
 //app.js => All about express
 const app = express();
@@ -66,6 +67,7 @@ app.use(express.static(`${__dirname}/public`));
 // ROUTE HANDLERs
 // app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/rooms", roomRouter);
 // app.use("/api/v1/reviews", reviewRouter);
 
 // for all http request
