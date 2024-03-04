@@ -66,6 +66,14 @@ const userSchema = new mongoose.Schema({
     enum: ["user", "admin"],
   },
   socket: String,
+  activeChatIds: [String],
+  chatRooms: {
+    type: [String],
+    set: function (values) {
+      // Set 객체를 이용하여 중복을 제거한 배열을 반환합니다.
+      return [...new Set(values)];
+    },
+  },
 });
 
 // PASSWORD HASHING

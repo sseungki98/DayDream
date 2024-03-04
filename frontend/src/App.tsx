@@ -9,6 +9,7 @@ import Main from "./pages/Main";
 import LookUp from "./pages/LookUp";
 import Mypage from "./pages/Mypage";
 import PrivateChat from "./pages/PrivateChat";
+import Chat from "./pages/Chat";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
         <Route path="/main" Component={Main} />
         <Route path="/lookup" Component={LookUp} />
         <Route path="/chat/:id" Component={PrivateChat} />
+        <Route path="/chat" Component={Chat} />
         <Route path="/mypage" Component={Mypage} />
       </Routes>
     </BrowserRouter>

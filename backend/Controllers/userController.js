@@ -1,3 +1,4 @@
+const Room = require("../models/roomModel");
 const User = require("../models/userModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
@@ -52,7 +53,7 @@ exports.getOneUser = catchAsync(async (req, res, next) => {
 exports.getTodayMatchUsers = catchAsync(async (req, res, next) => {
   const users = await User.aggregate([
     {
-      $match: { active: true, role: "user" },
+      $match: { active: true, role: "user", _id: { $ne: req.user._id } },
     },
     {
       $sample: { size: 20 },
@@ -75,6 +76,26 @@ exports.getMe = catchAsync(async (req, res, next) => {
     status: "success",
     data: {
       data: user,
+    },
+  });
+});
+
+exports.getMyChatRoomsInfo = catchAsync(async (req, res, next) => {
+  const chatRoomIds = req.user.chatRooms;
+  const roomInfos = await Promise.all(
+    chatRoomIds.map(async (id) => {
+      const info = await Room.findOne({ roomId: id }).select(
+        "-chats -__v -updatedAt",
+      );
+      return info;
+    }),
+  );
+
+  res.status(200).json({
+    status: "success",
+    length: roomInfos.length,
+    data: {
+      roomInfos,
     },
   });
 });

@@ -65,7 +65,6 @@ exports.login = catchAsync(async (req, res, next) => {
   }
   //   console.log("user:", user);
   const socketId = getSocketId();
-  console.log(socketId);
   userSocket[user._id] = socketId;
 
   // 3) if everything ok, send token to client
