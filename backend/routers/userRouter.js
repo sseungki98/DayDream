@@ -23,6 +23,10 @@ router
   );
 
 router
+  .route("/myChatsInfo")
+  .get(authController.protect, userController.getMyChatRoomsInfo);
+
+router
   .route("/:id")
   .get(
     authController.protect,
