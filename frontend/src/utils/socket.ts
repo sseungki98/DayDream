@@ -25,6 +25,10 @@ export function connectSocket() {
       console.log("loginData:", data);
     });
 
+    socket.on("sendMessage", (data: string) => {
+      console.log("message: ", data);
+    });
+
     setSocket(socket);
     return socket;
   }
