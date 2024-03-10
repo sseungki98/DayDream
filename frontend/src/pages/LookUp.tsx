@@ -43,9 +43,7 @@ function LookUp() {
         },
       })
       .then(res => {
-        console.log(res.data.data.data);
         setTodayUsers(res.data.data.data);
-        console.log(todayUsers);
       });
   };
 
@@ -82,7 +80,6 @@ const LookupContainer = styled.div`
   padding: 20px;
   gap: 20px;
   box-sizing: border-box;
-  /* overflow: scroll; */
 `;
 
 const UserCard = styled.div`
