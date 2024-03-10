@@ -1,24 +1,21 @@
 import React, { useState, useEffect, FormEvent, useRef } from "react";
 import styled from "styled-components";
 import { IconRoute } from "../components/FooterBar";
-import { FooterType } from "./Main";
-import { ConnectionState } from "../components/ConnectionState";
-import { Events } from "../components/Events";
-import { ConnectionManager } from "../components/ConnectionManager";
 import { useSocket } from "../stores/useSocket";
 import { useLogin } from "../stores/useLogin";
 import { useNavigate, useParams } from "react-router-dom";
 import { createRoomId } from "../utils/createRoomId";
+import { getChatRoomName } from "../utils/getChatRoomName";
 import api from "../apis/api";
 
-// { onItemClick }: { onItemClick: (item: FooterType) => void }
 function PrivateChat() {
   const navigator = useNavigate();
   const { id: toUserId } = useParams();
   const { currentSocket: socket } = useSocket();
   const [messages, setMessages] = useState([""]);
-  const { id } = useLogin();
+  const { id, name } = useLogin();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [roomName, setRoomName] = useState("");
   const scrollToBottom = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollTo({
@@ -38,13 +35,14 @@ function PrivateChat() {
       })
       .then(res => {
         console.log(res);
-        setMessages(res.data.data.room.chats);
-        console.log(messages);
+        if (res.data.data.room.chats !== null) {
+          setMessages(res.data.data.room.chats);
+        }
+        setRoomName(getChatRoomName(res.data.data.room.name, name));
         scrollToBottom();
       });
     if (socket) {
       socket.on("sendMessage", (data: string) => {
-        console.log("messagedata:", data);
         setMessages(prev => [...prev, data]);
       });
     }
@@ -58,7 +56,7 @@ function PrivateChat() {
   }, [messages]);
 
   const moveBack = () => {
-    navigator("/chat");
+    navigator(-1);
   };
 
   const [chat, setChat] = useState("");
@@ -73,14 +71,13 @@ function PrivateChat() {
 
   return (
     <Wrapper>
-      <ConnectionManager />
       <RoomHeader>
-        <img src={IconRoute("back-arrow")} width={48} height={48} alt="back-icon" onClick={moveBack} />
-        <span>이승현</span>
+        <BackArrow src={IconRoute("back-arrow")} width={48} height={48} alt="back-icon" onClick={moveBack} />
+        <span>{roomName}</span>
       </RoomHeader>
       <ChatBox ref={scrollRef}>
         {messages.map((message, index) => (
-          <MessageBox key={index} position={message[0] === id ? "right" : "left"}>
+          <MessageBox className={message[0] === id ? "sender" : "receiver"} key={index}>
             {message[1]}
           </MessageBox>
         ))}
@@ -97,15 +94,25 @@ function PrivateChat() {
 
 export default PrivateChat;
 
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  padding-top: 60px;
+`;
+
+const BackArrow = styled.img`
+  position: absolute;
+  left: 0px;
+`;
 
 const RoomHeader = styled.div`
   width: 393px;
   height: 60px;
   position: fixed;
   top: 0;
-  background-color: azure;
   display: flex;
+  background-color: #5e5e5e;
+  color: white;
+  font-weight: 700;
+  justify-content: center;
   align-items: center;
   text-align: center;
   img {
@@ -119,9 +126,9 @@ const SendBar = styled.form`
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: aqua;
-  position: fixed;
-  bottom: 70px;
+  background-color: white;
+  border: 1px solid #434343;
+  border-radius: 0px 0px 10px 10px;
   img {
     cursor: pointer;
   }
@@ -130,7 +137,9 @@ const SendBar = styled.form`
     height: 48px;
     border: none;
     background-color: transparent;
-    display: inline-block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 `;
 
@@ -138,23 +147,40 @@ const Input = styled.input`
   width: 80%;
   height: 40px;
   border-radius: 10px;
-  border: 1px solid black;
   background-color: white;
+  border: none;
   padding: 0px 10px 0px 10px;
 `;
 
 const ChatBox = styled.div`
   width: 100%;
-  height: 600px;
+  height: calc(100vh - 117px);
+  display: flex;
+  flex-direction: column;
   overflow: scroll;
-  background: linear-gradient(180deg, #b1a8ff, #ffb580);
+  background: #434343;
   animation: 1s ease-in;
+  &::-webkit-scrollbar {
+  display: none;
+  box-sizing: border-box;
+}
 `;
 
-const MessageBox = styled.div<{ position: string }>`
-  width: 80%;
-  height: 35px;
-  border: 1px solid black;
-  margin: 3px 0px 3px 0px;
-  float: ${props => props.position};
+const MessageBox = styled.div`
+  display: inline-block;
+  max-width: 70%;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  margin: 5px;
+  word-wrap: break-word;
+  &.sender {
+    align-self: flex-end;
+    background-color: #a5c9ff;
+  }
+
+  &.receiver {
+    align-self: flex-start;
+    background-color: #bbbbbb;
+  }
 `;

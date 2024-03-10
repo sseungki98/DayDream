@@ -33,7 +33,7 @@ exports.addSocketEvent = async (socket) => {
     });
     if (!room) {
       await Room.create({
-        name: receiveUser.name,
+        name: `${sendUser.name},${receiveUser.name}`,
         roomId: roomName,
         updatedAt: Date.now(),
         users: [sender, receiver],

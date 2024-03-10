@@ -117,7 +117,7 @@ function Index() {
 export default Index;
 
 export const Background = styled.div`
-  background-color: #bacfff;
+  background-color: #434343;
   width: 100%;
   height: 100vh;
 `;
