@@ -1,9 +1,7 @@
 const mongoose = require("mongoose");
 
 const roomSchema = new mongoose.Schema({
-  name: {
-    type: String,
-  },
+  name: String,
   roomId: String,
   createdAt: {
     type: Date,
