@@ -45,6 +45,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     height: req.body.height,
     weight: req.body.weight,
     age: req.body.age,
+    img: req.fileUrl,
   });
 
   createSendToken(newUser, 201, res);
