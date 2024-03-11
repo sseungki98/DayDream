@@ -38,8 +38,6 @@ exports.addSocketEvent = async (socket) => {
         updatedAt: Date.now(),
         users: [sender, receiver],
       });
-      sendUser.chatRooms.push(roomName);
-      receiveUser.chatRooms.push(roomName);
       await User.findByIdAndUpdate(sender, { $push: { chatRooms: roomName } });
       await User.findByIdAndUpdate(receiver, {
         $push: { chatRooms: roomName },
