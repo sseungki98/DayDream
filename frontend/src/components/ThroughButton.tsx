@@ -21,7 +21,7 @@ const SThroughButton = styled.button`
   transition: 0.4s cubic-bezier(0.77, 0, 0.175, 1);
   width: 80%;
   height: 45px;
-  border: 1px solid #86a9f9;
+  border: 1px solid #5e5e5e;
   background-color: #f7f7f7;
   cursor: pointer;
   border-radius: 10px;
