@@ -88,6 +88,7 @@ const UserCard = styled.div`
   height: 150px;
   background-color: white;
   border-radius: 10px;
+  margin-bottom: 15px;
   cursor: pointer;
   p {
     font-weight: 600;
