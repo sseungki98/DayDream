@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
+// const { uploadImageMiddleware } = require("../utils/uploadImage");
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -43,7 +44,7 @@ const userSchema = new mongoose.Schema({
     default: "",
     maxLength: [100, "자기소개는 100글자 이하여야 합니다."],
   },
-  img: [String],
+  img: String,
   age: {
     type: Number,
     default: 0,
@@ -75,6 +76,18 @@ const userSchema = new mongoose.Schema({
     },
   },
 });
+
+// userSchema.pre("save", async function (next) {
+//   uploadImageMiddleware(this, null, async (err) => {
+//     if (err) {
+//       return next(err);
+//     }
+//   });
+//   if (this.file) {
+//     this.img = this.file.location;
+//   }
+//   next();
+// });
 
 // PASSWORD HASHING
 userSchema.pre("save", async function (next) {

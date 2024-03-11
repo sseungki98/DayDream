@@ -15,6 +15,7 @@ interface RoomInfoProps {
   roomId: string;
   lastChat: string;
   timeOfLastChat: number;
+  img: string;
 }
 
 function getOppId(my_id: string, room_id: string) {
@@ -55,6 +56,7 @@ function Chat() {
       roomId: "",
       lastChat: "",
       timeOfLastChat: Date.now(),
+      img: "",
     },
   ]);
   useEffect(() => {
@@ -66,7 +68,7 @@ function Chat() {
       })
       .then(res => {
         const roomInfo = res.data.data.roomInfos;
-        const sorted_room_info = roomInfo.sort((a: any, b: any) => a.timeOfLastChat < b.timeOfLastChat ? 1 : -1);
+        const sorted_room_info = roomInfo.sort((a: any, b: any) => (a.timeOfLastChat < b.timeOfLastChat ? 1 : -1));
         console.log(sorted_room_info);
         setRoomInfos(sorted_room_info);
       })
@@ -78,7 +80,7 @@ function Chat() {
       room.lastChat && (
         <ChatBox onClick={() => navigator(`/chat/${getOppId(id, room.roomId)}`)}>
           <div className="leftbox">
-            <Image src={process.env.PUBLIC_URL + "/img/user-default-icon.svg"} />
+            <Image src={room.img} />
             <ChatText>
               <p className="name">{getChatRoomName(room.name, name)}</p>
               <p className="text">{stringParser(18, room.lastChat)}</p>
@@ -117,6 +119,7 @@ const Image = styled.img`
   margin: 0px 10px 0px 10px;
   width: 60px;
   height: 60px;
+  border-radius: 50%;
 `;
 const ChatText = styled.div`
   p {

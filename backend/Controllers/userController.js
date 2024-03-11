@@ -2,6 +2,7 @@ const Room = require("../models/roomModel");
 const User = require("../models/userModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
+const { getOppsId } = require("../utils/getOppsId");
 
 exports.getAllUser = catchAsync(async (req, res, next) => {
   const users = await User.find();
@@ -82,12 +83,20 @@ exports.getMe = catchAsync(async (req, res, next) => {
 
 exports.getMyChatRoomsInfo = catchAsync(async (req, res, next) => {
   const chatRoomIds = req.user.chatRooms;
+  const userId = String(req.user._id); //req.user._id 값도 string이 아닌 object로 넘어옴
   const roomInfos = await Promise.all(
     chatRoomIds.map(async (id) => {
       const info = await Room.findOne({ roomId: id }).select(
         "-chats -__v -updatedAt",
       );
-      return info;
+      const OppsImage = await User.findOne({
+        _id: getOppsId(info.roomId, userId),
+      }).select("img");
+      const updatedInfo = {
+        ...info.toObject(),
+        img: OppsImage.img,
+      };
+      return updatedInfo;
     }),
   );
 
