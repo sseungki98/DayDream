@@ -12,7 +12,7 @@ interface UserInfo {
   name: string;
   createdAt: Date;
   introduce: string;
-  img: [string];
+  img: string;
   age: number;
   height: number;
   weight: number;
@@ -28,7 +28,7 @@ function LookUp() {
       name: "",
       createdAt: new Date(),
       introduce: "",
-      img: [""],
+      img: "",
       age: 0,
       height: 0,
       weight: 0,
@@ -55,7 +55,8 @@ function LookUp() {
         currentSocket!.emit("makeRoom", { sender: id, receiver: user._id });
       }}
     >
-      {user.name}
+      <img src={user.img} alt="user-img" />
+      <p>{user.name}</p>
     </UserCard>
   ));
 
@@ -86,4 +87,17 @@ const UserCard = styled.div`
   width: 100%;
   height: 150px;
   background-color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  p {
+    font-weight: 600;
+    color: white;
+    text-align: center;
+    margin: 0 auto;
+  }
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+  }
 `;
