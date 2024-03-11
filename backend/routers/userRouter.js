@@ -1,10 +1,13 @@
 const express = require("express");
 const userController = require("../Controllers/userController");
 const authController = require("../Controllers/authController");
+const { uploadImage, upload } = require("../utils/uploadImage");
 
 const router = express.Router();
 
-router.route("/signup").post(authController.signup);
+router
+  .route("/signup")
+  .post(upload.single("image"), uploadImage, authController.signup);
 router.route("/login").post(authController.login);
 
 router.route("/").get(userController.getAllUser);
